@@ -1,69 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Car Race</title>
-  <style>
-    body { margin:0; background:#111; display:flex; justify-content:center; align-items:center; height:100vh; }
-    canvas { background:#333; border:3px solid white; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Piece Car Game</title>
+<style>
+  body {
+    margin: 0;
+    background: #87ceeb; /* Temporary background */
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+  #gameCanvas {
+    display: block;
+    margin: 0 auto;
+    border: 3px solid gold;
+    border-radius: 15px;
+    background-color: #f0f0f0;
+  }
+  #score {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    font-weight: bold;
+    color: gold;
+  }
+</style>
 </head>
 <body>
+<div id="score">Score: 0</div>
 <canvas id="gameCanvas" width="400" height="600"></canvas>
-<script>
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
 
-let car = { x: 180, y: 500, w: 40, h: 80, speed: 5 };
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+let car = {
+  x: canvas.width / 2 - 25,
+  y: canvas.height - 120,
+  width: 50,
+  height: 100,
+  speed: 7
+};
+
+// Use a colored rectangle for now (replace with local image if you have one)
+function drawCar() {
+  ctx.fillStyle = "red"; // Luffy car placeholder
+  ctx.fillRect(car.x, car.y, car.width, car.height);
+}
+
 let obstacles = [];
+let score = 0;
 let gameOver = false;
 
-function drawCar() {
-  ctx.fillStyle = "red";
-  ctx.fillRect(car.x, car.y, car.w, car.h);
-}
-
-function drawObstacles() {
-  ctx.fillStyle = "yellow";
-  obstacles.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
-}
-
-function updateObstacles() {
-  obstacles.forEach(o => o.y += 4);
-  obstacles = obstacles.filter(o => o.y < canvas.height);
-  if (Math.random() < 0.03) {
-    obstacles.push({ x: Math.random()*350, y: -80, w:40, h:80 });
-  }
-}
-
-function checkCollision() {
-  for (let o of obstacles) {
-    if (car.x < o.x+o.w && car.x+car.w > o.x && car.y < o.y+o.h && car.y+car.h > o.y) {
-      gameOver = true;
-    }
-  }
-}
-
-function gameLoop() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  drawCar();
-  drawObstacles();
-  updateObstacles();
-  checkCollision();
-  if (!gameOver) requestAnimationFrame(gameLoop);
-  else {
-    ctx.fillStyle="white";
-    ctx.font="30px Arial";
-    ctx.fillText("Game Over!",120,300);
-  }
-}
-
-document.addEventListener("keydown", e => {
-  if (e.key==="ArrowLeft" && car.x>0) car.x -= car.speed;
-  if (e.key==="ArrowRight" && car.x+car.w<canvas.width) car.x += car.speed;
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'ArrowLeft' && car.x > 0) car.x -= car.speed;
+  if(e.key === 'ArrowRight' && car.x + car.width < canvas.width) car.x += car.speed;
 });
 
-gameLoop();
+function spawnObstacle() {
+  let width = Math.random() * 60 + 40;
+  let x = Math.random() * (canvas.width - width);
+  obstacles.push({x: x, y: -100, width: width, height: 100, speed: 5});
+}
+
+function update() {
+  if(gameOver) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  drawCar();
+
+  for(let i = 0; i < obstacles.length; i++){
+    let obs = obstacles[i];
+    obs.y += obs.speed;
+    ctx.fillStyle = "black";
+    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+
+    // Collision
+    if(car.x < obs.x + obs.width &&
+       car.x + car.width > obs.x &&
+       car.y < obs.y + obs.height &&
+       car.y + car.height > obs.y) {
+      gameOver = true;
+      document.getElementById('score').innerText = "Game Over! Score: " + score;
+      return;
+    }
+
+    // Remove offscreen
+    if(obs.y > canvas.height) {
+      obstacles.splice(i, 1);
+      score++;
+      document.getElementById('score').innerText = "Score: " + score;
+      i--;
+    }
+  }
+
+  requestAnimationFrame(update);
+}
+
+// Start spawning obstacles
+setInterval(spawnObstacle, 1500);
+update();
 </script>
 </body>
 </html>
+
+
