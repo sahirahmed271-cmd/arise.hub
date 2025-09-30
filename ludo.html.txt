@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ludo Dice</title>
+  <style>
+    body { text-align:center; background:#0f172a; color:white; }
+    button {
+      font-size:24px; margin:20px; padding:15px 30px;
+      border-radius:10px; border:none;
+      background:#3b82f6; color:white;
+    }
+    #dice { font-size:48px; margin:20px; }
+  </style>
+</head>
+<body>
+  <h1>🎲 Ludo Dice Roller</h1>
+  <button onclick="roll()">Roll Dice</button>
+  <div id="dice">🎲</div>
+  <h2 id="result"></h2>
+
+  <script>
+    function roll() {
+      const num = Math.floor(Math.random()*6)+1;
+      const diceFaces = ["⚀","⚁","⚂","⚃","⚄","⚅"];
+      document.getElementById("dice").textContent = diceFaces[num-1];
+      document.getElementById("result").textContent = "You rolled: "+num;
+    }
+  </script>
+</body>
+</html>

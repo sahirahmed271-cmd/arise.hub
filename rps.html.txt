@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rock Paper Scissors</title>
+  <style>
+    body { text-align:center; background:#0f172a; color:white; }
+    button {
+      font-size:24px; margin:10px; padding:15px 25px;
+      border-radius:10px; border:none;
+      background:#3b82f6; color:white;
+    }
+    #result { font-size:28px; margin-top:20px; }
+  </style>
+</head>
+<body>
+  <h1>✊✋✌️ Rock Paper Scissors</h1>
+  <div>
+    <button onclick="play('rock')">✊ Rock</button>
+    <button onclick="play('paper')">✋ Paper</button>
+    <button onclick="play('scissors')">✌️ Scissors</button>
+  </div>
+  <h2 id="result"></h2>
+
+  <script>
+    function play(player) {
+      const choices = ["rock","paper","scissors"];
+      const comp = choices[Math.floor(Math.random()*3)];
+      let res = "";
+      if (player===comp) res="Draw!";
+      else if ((player==="rock"&&comp==="scissors") ||
+               (player==="paper"&&comp==="rock") ||
+               (player==="scissors"&&comp==="paper")) {
+        res="You Win!";
+      } else res="You Lose!";
+      document.getElementById("result").textContent =
+        `You: ${player} | Computer: ${comp} → ${res}`;
+    }
+  </script>
+</body>
+</html>

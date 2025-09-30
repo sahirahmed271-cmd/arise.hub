@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Snake Game</title>
+  <style>
+    body { text-align: center; background: #0f172a; color: white; }
+    canvas { background: #1e293b; display: block; margin: 20px auto; }
+    #controls { margin-top: 15px; }
+    #controls button {
+      font-size: 24px; padding: 15px; margin: 5px;
+      border-radius: 10px; border: none;
+      background: #3b82f6; color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>🐍 Snake Game</h1>
+  <canvas id="game" width="400" height="400"></canvas>
+
+  <!-- Mobile controls -->
+  <div id="controls">
+    <div>
+      <button onclick="dir='UP'">⬆️</button>
+    </div>
+    <div>
+      <button onclick="dir='LEFT'">⬅️</button>
+      <button onclick="dir='DOWN'">⬇️</button>
+      <button onclick="dir='RIGHT'">➡️</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+
+    let box = 20;
+    let snake = [{x: 9*box, y: 10*box}];
+    let dir = null;
+    let food = {x: Math.floor(Math.random()*20)*box, y: Math.floor(Math.random()*20)*box};
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowUp" && dir!=="DOWN") dir = "UP";
+      if (e.key === "ArrowDown" && dir!=="UP") dir = "DOWN";
+      if (e.key === "ArrowLeft" && dir!=="RIGHT") dir = "LEFT";
+      if (e.key === "ArrowRight" && dir!=="LEFT") dir = "RIGHT";
+    });
+
+    function draw() {
+      ctx.fillStyle = "#1e293b";
+      ctx.fillRect(0,0,400,400);
+
+      for (let i=0; i<snake.length; i++) {
+        ctx.fillStyle = (i===0) ? "#22c55e" : "#86efac";
+        ctx.fillRect(snake[i].x, snake[i].y, box, box);
+      }
+
+      ctx.fillStyle = "#f43f5e";
+      ctx.fillRect(food.x, food.y, box, box);
+
+      let snakeX = snake[0].x;
+      let snakeY = snake[0].y;
+
+      if (dir==="UP") snakeY -= box;
+      if (dir==="DOWN") snakeY += box;
+      if (dir==="LEFT") snakeX -= box;
+      if (dir==="RIGHT") snakeX += box;
+
+      if (snakeX === food.x && snakeY === food.y) {
+        food = {x: Math.floor(Math.random()*20)*box, y: Math.floor(Math.random()*20)*box};
+      } else {
+        snake.pop();
+      }
+
+      let newHead = {x: snakeX, y: snakeY};
+
+      // Game Over
+      if (snakeX<0 || snakeY<0 || snakeX>=400 || snakeY>=400 || 
+          snake.some((s, i)=> i>0 && s.x===newHead.x && s.y===newHead.y)) {
+        alert("Game Over!");
+        document.location.reload();
+      }
+
+      snake.unshift(newHead);
+    }
+
+    setInterval(draw, 150);
+  </script>
+</body>
+</html>

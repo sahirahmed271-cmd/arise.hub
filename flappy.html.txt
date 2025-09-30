@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flappy Bird</title>
+  <style>
+    body { text-align:center; background:#0f172a; color:white; }
+    canvas { background:#1e293b; display:block; margin:20px auto; }
+    #controls { margin-top:15px; }
+    #controls button {
+      font-size:24px; padding:15px 25px;
+      border-radius:10px; border:none;
+      background:#3b82f6; color:white;
+    }
+  </style>
+</head>
+<body>
+  <h1>🐦 Flappy Bird</h1>
+  <canvas id="game" width="320" height="480"></canvas>
+  <div id="controls">
+    <button onclick="flap()">⬆️ Jump</button>
+  </div>
+
+  <script>
+    const cvs = document.getElementById("game");
+    const ctx = cvs.getContext("2d");
+
+    let birdY = 150, birdX = 50, gravity = 2, lift = -30, velocity = 0;
+    let pipes = [];
+    let frame = 0;
+    let score = 0;
+
+    function flap() { velocity = lift; }
+    document.addEventListener("keydown", e => { if (e.key===" "||e.key==="ArrowUp") flap(); });
+
+    function draw() {
+      ctx.fillStyle = "#1e293b";
+      ctx.fillRect(0,0,cvs.width,cvs.height);
+
+      // bird
+      ctx.fillStyle = "#facc15";
+      ctx.beginPath();
+      ctx.arc(birdX, birdY, 15, 0, Math.PI*2);
+      ctx.fill();
+
+      velocity += gravity * 0.5;
+      birdY += velocity;
+
+      if (frame % 90 === 0) {
+        let gap = 100;
+        let top = Math.random()*200+50;
+        pipes.push({x:cvs.width, y:top, gap:gap});
+      }
+
+      for (let i=0; i<pipes.length; i++) {
+        let p = pipes[i];
+        ctx.fillStyle = "#22c55e";
+        ctx.fillRect(p.x, 0, 40, p.y-gap/2);
+        ctx.fillRect(p.x, p.y+gap/2, 40, cvs.height);
+
+        p.x -= 2;
+
+        if (birdX+15>p.x && birdX-15<p.x+40 &&
+            (birdY-15 < p.y-gap/2 || birdY+15 > p.y+gap/2)) {
+          alert("Game Over! Score: "+score);
+          document.location.reload();
+        }
+
+        if (p.x+40 < birdX && !p.passed) {
+          score++;
+          p.passed = true;
+        }
+      }
+
+      ctx.fillStyle="white";
+      ctx.font="20px Arial";
+      ctx.fillText("Score: "+score,10,20);
+
+      if (birdY>cvs.height || birdY<0) {
+        alert("Game Over! Score: "+score);
+        document.location.reload();
+      }
+
+      frame++;
+      requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
+</body>
+</html>
