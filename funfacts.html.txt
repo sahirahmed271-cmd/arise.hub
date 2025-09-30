@@ -1,0 +1,11 @@
+const facts = [
+    "Honey never spoils.",
+    "Octopuses have three hearts.",
+    "A day on Venus is longer than a year on Venus.",
+    "Bananas are berries, but strawberries aren’t.",
+    "Quote: “The best way to get started is to quit talking and begin doing.” – Walt Disney"
+];
+
+function getRandomFact() {
+    return facts[Math.floor(Math.random()*facts.length)];
+}

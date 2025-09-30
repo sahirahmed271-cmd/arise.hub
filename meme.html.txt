@@ -1,0 +1,34 @@
+const memeCanvas = document.getElementById("memeCanvas");
+const ctx = memeCanvas.getContext("2d");
+const memeImageInput = document.getElementById("memeImage");
+const generateBtn = document.getElementById("generateMeme");
+const downloadLink = document.getElementById("downloadMeme");
+
+let img = new Image();
+
+memeImageInput.addEventListener("change", function(e){
+    const file = e.target.files[0];
+    if(file){ img.src = URL.createObjectURL(file); }
+});
+
+generateBtn.addEventListener("click", () => {
+    ctx.clearRect(0,0,memeCanvas.width,memeCanvas.height);
+    ctx.drawImage(img,0,0,memeCanvas.width,memeCanvas.height);
+
+    ctx.font="30px Arial";
+    ctx.fillStyle="white";
+    ctx.strokeStyle="black";
+    ctx.lineWidth=2;
+
+    let topText=document.getElementById("topText").value;
+    let bottomText=document.getElementById("bottomText").value;
+
+    ctx.textAlign="center";
+    ctx.fillText(topText,memeCanvas.width/2,40);
+    ctx.strokeText(topText,memeCanvas.width/2,40);
+
+    ctx.fillText(bottomText,memeCanvas.width/2,memeCanvas.height-20);
+    ctx.strokeText(bottomText,memeCanvas.width/2,memeCanvas.height-20);
+
+    downloadLink.href=memeCanvas.toDataURL("image/png");
+});
